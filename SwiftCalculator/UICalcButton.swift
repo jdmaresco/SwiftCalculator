@@ -8,12 +8,15 @@
 
 import UIKit
 
-class UICalcButton: UIButton {
+class UICalcButton: UIView {
     
+    var button = UIButton()
     var label = UILabel()
+    var btnType = buttonType.none
     var bgColor: UIColor = UIColor.lightGrayColor() {
         willSet {
-            self.backgroundColor = newValue
+            // Make sure button background gets updated whenever bgColor is updated
+            self.button.backgroundColor = newValue
         }
     }
     
@@ -21,7 +24,7 @@ class UICalcButton: UIButton {
     
     let borderColorOperatorSelected: UIColor = UIColor.blackColor()
     
-    init(label labelText: String, bgColor bg: UIColor, bgColorClicked bgc: UIColor) {
+    init(label labelText: String, bgColor bg: UIColor, bgColorClicked bgc: UIColor, button: buttonType) {
         
         super.init()
         initButton()
@@ -29,9 +32,10 @@ class UICalcButton: UIButton {
         self.bgColor = bg
         self.bgColorClicked = bgc
         self.label.text = labelText
+        self.btnType = button
         
         // Set background color of view (since willSet doesn't get called from within initializer.
-        self.backgroundColor = bg
+        self.button.backgroundColor = bg
     }
     
     override init(frame: CGRect) {
@@ -46,27 +50,38 @@ class UICalcButton: UIButton {
     
     func initButton() {
         self.label.setTranslatesAutoresizingMaskIntoConstraints(false)
-        self.addSubview(self.label)
+        self.button.setTranslatesAutoresizingMaskIntoConstraints(false)
 
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[label]|", options: nil, metrics: nil, views: ["label": self.label]))
+        self.addSubview(self.button)
+        self.button.addSubview(self.label)
         
-        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[label]|", options: nil, metrics: nil, views: ["label": self.label]))
+        // Layout buttons within view
+        
+        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[button]|", options: nil, metrics: nil, views: ["button": self.button]))
+        self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[button]|", options: nil, metrics: nil, views: ["button": self.button]))
+        
+        // Layout labels within buttons
+        
+        self.button.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[label]|", options: nil, metrics: nil, views: ["label": self.label]))
+        self.button.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[label]|", options: nil, metrics: nil, views: ["label": self.label]))
+        
+        // Style view and button label
         
         self.label.textColor = UIColor.blackColor()
         self.label.font = UIFont(name: "Helvetica Light", size: 34)
-        self.layer.borderColor = UIColor.lightGrayColor().CGColor
-        self.layer.borderWidth = 0.6
+        self.layer.borderColor = UIColor.darkGrayColor().CGColor
+        self.layer.borderWidth = 0.5
         self.label.textAlignment = .Center
         
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        self.backgroundColor = self.bgColorClicked
+        self.button.backgroundColor = self.bgColorClicked
     }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
         UIView.animateWithDuration(0.5, animations: { () -> Void in
-            self.backgroundColor = self.bgColor
+            self.button.backgroundColor = self.bgColor
         })
     }
     

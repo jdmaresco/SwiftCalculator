@@ -17,19 +17,37 @@ extension String {
         return regex?.stringByReplacingMatchesInString(self, options: .allZeros, range: range, withTemplate: replacementPattern)
     }
     
-    func convertToDouble() -> Double? {
+    func convertToDouble() -> Double {
         return (self as NSString).doubleValue
     }
 }
 
 extension Double {
-    func convertToString() -> String? {
+    func convertToString() -> String {
         
         // Remove trailing zeroes after decimal
-        let regExSearchPattern = "([^0])(0*)$"
-        let regExReplacementPattern = "$1"
-        let rawConvertedValue = String(format:"%f", self)
-        let convertedValue = rawConvertedValue.replaceByPattern(regExSearchPattern, withReplacementPattern: regExReplacementPattern)
-        return convertedValue?
+        var regExSearchPattern = "([^0])(0*)$"
+        var regExReplacementPattern = "$1"
+        var rawConvertedValue = String(format:"%f", self)
+        var convertedValue = rawConvertedValue.replaceByPattern(regExSearchPattern, withReplacementPattern: regExReplacementPattern)
+        
+        // Remove trailing decimal if present
+        // NOTE: There is probably a way to combine this into one regex, but this was the fastest solution for me
+        
+        regExSearchPattern = "([^\\.])(\\.*)$"
+        regExReplacementPattern = "$1"
+        if let conv = convertedValue {
+            convertedValue = conv.replaceByPattern(regExSearchPattern, withReplacementPattern: regExReplacementPattern)
+        }
+        
+        if let result = convertedValue {
+            return result
+        } else {
+            return ""
+        }
     }
+}
+
+enum buttonType {
+    case clear, plusMinus, percent, dividedBy, seven, eight, nine, times, four, five, six, minus, one, two, three, plus, zero, period, equals, none
 }
