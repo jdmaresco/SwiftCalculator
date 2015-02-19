@@ -8,6 +8,10 @@
 
 import UIKit
 
+
+// UICalcButton subclasses UIView, not UIButton, but a UIButton is instantiated and added to this UIView.
+// This remediated issues I was having with using .addTarget() on a subclass of UIButton.
+
 class UICalcButton: UIView {
     
     var button = UIButton()
@@ -34,7 +38,7 @@ class UICalcButton: UIView {
         self.label.text = labelText
         self.btnType = button
         
-        // Set background color of view (since willSet doesn't get called from within initializer.
+        // Set background color of view (since willSet doesn't get called from within initializer.)
         self.button.backgroundColor = bg
     }
     
